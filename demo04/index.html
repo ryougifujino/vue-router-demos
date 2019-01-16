@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Nested Named Views</title>
+</head>
+<body>
+<div id="app">
+    <router-link to="/lab/alpha">α</router-link>
+    <router-link to="/lab/beta">β</router-link>
+
+    <router-view></router-view>
+</div>
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+<script>
+    const Lab = {
+        template:
+            `<div style="border: 1px dotted black; padding: 5px;">
+                <h1>Lab</h1>
+                <router-view></router-view>
+                <router-view name="pro"></router-view>
+            </div>`
+    };
+
+    const ProductA = {template: `<div>Product A</div>`};
+    const ProductB = {template: `<div>Product B</div>`};
+    const ProductBPro = {template: `<div>Product B Pro</div>`};
+
+    const routes = [
+        {
+            path: '/lab',
+            component: Lab,
+            children: [
+                {
+                    path: 'alpha',
+                    component: ProductA
+                },
+                {
+                    path: 'beta',
+                    components: {
+                        default: ProductB,
+                        pro: ProductBPro
+                    }
+                }
+            ]
+        }
+    ];
+    const router = new VueRouter({
+        routes
+    });
+    const app = new Vue({
+        el: '#app',
+        router
+    });
+</script>
+</body>
+</html>
