@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Route Meta Fields</title>
+</head>
+<body>
+<div id="app">
+    <router-link to="/foo/bar">Run</router-link>
+    <router-view></router-view>
+</div>
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+<script>
+    const Foo = {
+        template: `
+        <div style="padding: 5px; border: 1px dotted black;">
+            <h1>Foo</h1>
+            <router-view></router-view>
+        </div>`
+    };
+
+    const Bar = {
+        template: `<h3 style="border: 1px solid blue;">Bar</h3>`
+    };
+
+    const routes = [
+        {
+            path: '/foo',
+            component: Foo,
+            children: [
+                {
+                    path: 'bar',
+                    component: Bar,
+                    meta: {authRequired: true}
+                }
+            ]
+        }
+    ];
+
+    const router = new VueRouter({routes});
+
+    router.beforeEach((to, from, next) => {
+        console.log(to.matched);
+        if (to.matched.some(r => r.meta.authRequired)) {
+            console.log('Authentication required!')
+        }
+        next();
+    });
+
+    const app = new Vue({
+        el: '#app',
+        router
+    });
+</script>
+</body>
+</html>
