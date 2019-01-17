@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Passing Props to Route Components - Function mode</title>
+</head>
+<body>
+<div id="app">
+    <router-link to="/a">A</router-link>
+
+    <router-view></router-view>
+</div>
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+<script>
+    const A = {
+        props: ['query'],
+        template: `<div>{{ query }}</div>`,
+    };
+    const routes = [
+        {
+            path: '/a',
+            component: A,
+            props: route => ({query: route.query})
+        }
+    ];
+
+    const router = new VueRouter({routes});
+    const app = new Vue({
+        el: '#app',
+        router
+    });
+</script>
+</body>
+</html>
