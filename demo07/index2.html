@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Per-Route Guard</title>
+</head>
+<body>
+<div id="app">
+    <router-link to="/hit">Hit</router-link>
+
+    <router-view></router-view>
+</div>
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+<script>
+    const Pig = {template: '<div>I am a pig.</div>'};
+    const Duck = {template: `<div>I am a duck.</div>`}
+    const routes = [{
+        path: '/hit',
+        component: Pig,
+        beforeEnter(to, from, next) {
+            // this can not go to duck:
+            // to.path = '/duck';
+            // next();
+
+            // this can:
+            if (to.path === 'duck') next();
+            else next('/duck')
+        }
+    }, {
+        path: '/duck',
+        component: Duck
+    },
+
+    ];
+    const router = new VueRouter({
+        routes
+    });
+    const app = new Vue({
+        el: '#app',
+        router
+    })
+</script>
+</body>
+</html>
