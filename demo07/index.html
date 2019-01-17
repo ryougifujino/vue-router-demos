@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Global Guards & Global Resolve Guards & Global After Hooks</title>
+</head>
+<body>
+<div id="app">
+    <router-link to="/hit">Hit</router-link>
+
+    <router-view></router-view>
+</div>
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+<script>
+    const Pig = {template: '<div>I am a pig.</div>'};
+    const Duck = {template: `<div>I am a duck.</div>`}
+    const routes = [{
+        path: '/hit',
+        component: Pig
+    }, {
+        path: '/duck',
+        component: Duck
+    },
+
+    ];
+    const router = new VueRouter({
+        routes
+    });
+    router.beforeEach((to, from, next) => {
+        console.log('beforeEach', to, from);
+        // next() not invoked: Pig will not appear.
+
+        // next(false) : url will revert to from.
+
+        if (to.path === '/duck') next();
+        else next('/duck');
+        // 当执行钩子函数时 如果遇到next("/xxx")时，会将原本的导航中断，然后将to.path改成next中的地址，
+        // 然后重新触发这个离开的钩子。注意：会重新触发执行这个钩子，而不是在这个钩子函数中继续执行。
+        // 以前只认为next("/xxx")就直接去跳转了。所以当重新触发后就会继续执行next('/xxx')所以会一直循环。
+        // 至于解决办法就是判断下，如果已经是/xxx了就next()。
+    });
+
+    // ⬇ ~ flow
+
+    // after all in-component guards and async route components are resolved.
+    router.beforeResolve((to, from, next) => {
+        console.log('beforeResolve');
+        next();
+    });
+
+    // ⬇ ~ flow
+
+    // without next argument
+    router.afterEach((to, from) => {
+        console.log('afterEach');
+    });
+    const app = new Vue({
+        el: '#app',
+        router
+    })
+</script>
+</body>
+</html>
